@@ -20,8 +20,8 @@ import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { UpdateCategoryDTO } from './dtos/update-category.dto';
 
 @Controller('api/v1')
-export class AppController {
-  private logger = new Logger(AppController.name);
+export class CategoriesController {
+  private logger = new Logger(CategoriesController.name);
   private clientAdminBackend: ClientProxy;
   constructor() {
     this.clientAdminBackend = ClientProxyFactory.create({
