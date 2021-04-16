@@ -1,12 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CategorySchema } from './interfaces/categories/category.schema';
-import { PlayerSchema } from './interfaces/players/player.schema';
 import * as dotenv from 'dotenv';
-import { AppService } from './app.service';
-import { AppController } from './app.controller';
+import { CategoriesModule } from './categories/categories.module';
 dotenv.config();
-
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.DB_URL, {
@@ -15,12 +11,9 @@ dotenv.config();
       useUnifiedTopology: true,
       useFindAndModify: false,
     }),
-    MongooseModule.forFeature([
-      { name: 'Category', schema: CategorySchema },
-      { name: 'Player', schema: PlayerSchema },
-    ]),
+    CategoriesModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
