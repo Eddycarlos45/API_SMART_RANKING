@@ -16,22 +16,17 @@ import {
   Transport,
 } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
+import { ClientProxySmartRanking } from 'src/proxymrq/client-proxy';
 import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { UpdateCategoryDTO } from './dtos/update-category.dto';
 
 @Controller('api/v1')
 export class CategoriesController {
   private logger = new Logger(CategoriesController.name);
-  private clientAdminBackend: ClientProxy;
-  constructor() {
-    this.clientAdminBackend = ClientProxyFactory.create({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://user:bitnami@localhost:5672/smartranking'],
-        queue: 'admin-backend',
-      },
-    });
-  }
+
+  constructor(private clientProxySmartRanking: ClientProxySmartRanking) {}
+
+  private clientAdminBackend = this.clientProxySmartRanking.getClientProxyAdminBackendInstance();
 
   @Post('categories')
   @UsePipes(ValidationPipe)
