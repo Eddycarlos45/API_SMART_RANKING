@@ -30,11 +30,12 @@ export class AppController {
       await channel.ack(originalMessage);
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
-      ackErrors.map(async (ackError) => {
-        if (error.message.includes(ackError)) {
-          await channel.ack(originalMessage);
-        }
-      });
+      const filterAckError = ackErrors.filter((ackErrors) =>
+        error.message.includes(ackErrors),
+      );
+      if (filterAckError) {
+        await channel.ack(originalMessage);
+      }
     }
   }
 
