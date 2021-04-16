@@ -30,8 +30,8 @@ export class AppController {
       await channel.ack(originalMessage);
     } catch (error) {
       this.logger.error(`error: ${JSON.stringify(error.message)}`);
-      const filterAckError = ackErrors.filter((ackErrors) =>
-        error.message.includes(ackErrors),
+      const filterAckError = ackErrors.filter((ackError) =>
+        error.message.includes(ackError),
       );
       if (filterAckError) {
         await channel.ack(originalMessage);
@@ -40,11 +40,37 @@ export class AppController {
   }
 
   @MessagePattern('get-categories')
-  async getCategories(@Payload() _id: string) {
-    if (_id) {
-      return await this.appService.getCategoryById(_id);
-    } else {
-      return await this.appService.getCategories();
+  async getCategories(@Payload() _id: string, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+    try {
+      if (_id) {
+        return await this.appService.getCategoryById(_id);
+      } else {
+        return await this.appService.getCategories();
+      }
+    } finally {
+      await channel.ack(originalMessage);
+    }
+  }
+
+  @EventPattern('update-category')
+  async updateCategory(@Payload() data: any, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+    this.logger.log(`data: ${JSON.stringify(data)}`);
+    try {
+      const _id: string = data.id;
+      const category: ICategory = data.category;
+      await this.appService.updateCategory(_id, category);
+      await channel.ack(originalMessage);
+    } catch (error) {
+      const filterAckError = ackErrors.filter((ackError) =>
+        error.message.includes(ackError),
+      );
+      if (filterAckError) {
+        await channel.ack(originalMessage);
+      }
     }
   }
 }
