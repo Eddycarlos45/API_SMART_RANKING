@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { IPlayer } from 'src/interfaces/players/player.interface';
+import { IPlayer } from 'src/players/interfaces/player.interface';
 import { Tracing } from 'trace_events';
 
 export interface ICategory extends Document {

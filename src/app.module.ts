@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as dotenv from 'dotenv';
 import { CategoriesModule } from './categories/categories.module';
+import { PlayersModule } from './players/players.module';
 dotenv.config();
 @Module({
   imports: [
@@ -11,7 +12,8 @@ dotenv.config();
       useUnifiedTopology: true,
       useFindAndModify: false,
     }),
-    CategoriesModule
+    CategoriesModule,
+    PlayersModule
   ],
   controllers: [],
   providers: [],
