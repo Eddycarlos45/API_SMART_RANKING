@@ -20,7 +20,7 @@ import { ClientProxySmartRanking } from 'src/proxymrq/client-proxy';
 import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { UpdateCategoryDTO } from './dtos/update-category.dto';
 
-@Controller('api/v1')
+@Controller('api/v1/categories')
 export class CategoriesController {
   private logger = new Logger(CategoriesController.name);
 
@@ -28,18 +28,18 @@ export class CategoriesController {
 
   private clientAdminBackend = this.clientProxySmartRanking.getClientProxyAdminBackendInstance();
 
-  @Post('categories')
+  @Post()
   @UsePipes(ValidationPipe)
   createCaregory(@Body() createCategoryDTO: CreateCategoryDTO) {
     this.clientAdminBackend.emit('create-category', createCategoryDTO);
   }
 
-  @Get('categories')
+  @Get()
   getCategories(@Query('idCategory') _id: string): Observable<any> {
     return this.clientAdminBackend.send('get-categories', _id ? _id : '');
   }
 
-  @Put('categories/:_id')
+  @Put('/:_id')
   @UsePipes(ValidationPipe)
   updateCategory(
     @Body() updateCategoryDTO: UpdateCategoryDTO,
