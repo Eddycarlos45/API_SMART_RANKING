@@ -26,4 +26,14 @@ export class ClientProxySmartRanking {
       },
     });
   }
+
+  getClientProxyRankingsInstance(): ClientProxy {
+    return ClientProxyFactory.create({
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://user:bitnami@localhost:5672/smartranking'],
+        queue: 'rankings',
+      },
+    });
+  }
 }

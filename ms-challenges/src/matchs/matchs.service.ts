@@ -14,6 +14,7 @@ export class MatchsService {
     private readonly logger = new Logger(MatchsService.name)
 
     private clientChallenge = this.clientProxySmartRanking.getClientProxyChallengeInstance()
+    private clientRankings = this.clientProxySmartRanking.getClientProxyRankingsInstance()
 
     async createMatch(match: IMatch): Promise<IMatch> {
         try {
@@ -29,9 +30,13 @@ export class MatchsService {
             {idPlayer: '', _id: match.challenge})
             .toPromise()
 
-            return await this.clientChallenge.emit('update-challenge-match',
+            await this.clientChallenge.emit('update-challenge-match',
             {idMatch: idMatch, challenge: challenge})
             .toPromise()
+
+            return await this.clientRankings.emit('process-match', 
+            {idMatch: idMatch, match: match}).toPromise()
+
         } catch (error) {
             this.logger.error(`error: ${JSON.stringify(error.message)}`)
             throw new RpcException(error.message)
