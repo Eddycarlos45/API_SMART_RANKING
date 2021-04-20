@@ -5,4 +5,4 @@ import { ClientProxySmartRanking } from './client-proxy';
   providers: [ClientProxySmartRanking],
   exports: [ClientProxySmartRanking],
 })
-export class ProxyRQMOdule {}
+export class ProxyRQModule {}

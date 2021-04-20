@@ -16,7 +16,7 @@ import {
   Transport,
 } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { ClientProxySmartRanking } from 'src/proxymrq/client-proxy';
+import { ClientProxySmartRanking } from 'src/common/proxymrq/client-proxy';
 import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { UpdateCategoryDTO } from './dtos/update-category.dto';
 

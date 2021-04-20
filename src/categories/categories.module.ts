@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ProxyRQMOdule } from 'src/proxymrq/proxyrmq.module';
+import { ProxyRQModule } from 'src/common/proxymrq/proxyrmq.module';
 import { CategoriesController } from './categories.controller';
 @Module({
-  imports: [ProxyRQMOdule],
+  imports: [ProxyRQModule],
   controllers: [CategoriesController],
   providers: [],
 })

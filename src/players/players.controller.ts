@@ -13,7 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ClientProxySmartRanking } from 'src/proxymrq/client-proxy';
+import { ClientProxySmartRanking } from 'src/common/proxymrq/client-proxy';
 import { CreatePlayerDTO } from './dtos/create-player.dto';
 import { UpdatePlayerDTO } from './dtos/update-player.dto';
 
