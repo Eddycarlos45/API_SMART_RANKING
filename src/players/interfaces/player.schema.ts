@@ -6,8 +6,8 @@ export const PlayerSchema = new mongoose.Schema(
     phoneNumber: { type: String },
     name: String,
     ranking: String,
-    rankingPosition: Number,
-    urlPhotoPlayer: String,
+    category: {type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+    rankingPosition: Number
   },
   { timestamps: true, collection: 'players' },
 );
