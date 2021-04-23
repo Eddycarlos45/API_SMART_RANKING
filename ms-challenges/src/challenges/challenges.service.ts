@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ChallengeStatus } from './challenge-status.enum';
 import { IChallenge } from './interfaces/challenge.interface';
-
+import * as momentTimezone from 'moment-timezone';
 @Injectable()
 export class ChallengesService {
 
@@ -97,5 +97,39 @@ export class ChallengesService {
             this.logger.error(`error: ${JSON.stringify(error.message)}`)
             throw new RpcException(error.message)
         }
+    }
+
+    async queryChallengesPerformed(idCategory: string): Promise<IChallenge[]>{
+        try {
+            return await this.challengeModel.find()
+            .where('category')
+            .equals(idCategory)
+            .where('status')
+            .equals(ChallengeStatus.FULFILLED)
+            .exec()
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+    }
+
+    async queryChallengesPerformedByDate(idCategory: string, dataRef: string): Promise<IChallenge[]>{
+        try {
+            const dataRefNew = `${dataRef} 20:59:59.999`
+
+            return await this.challengeModel.find()
+            .where('category')
+            .equals(idCategory)
+            .where('status')
+            .equals(ChallengeStatus.FULFILLED)
+            .where('dateHourChallenge')
+            .lte(momentTimezone(dataRefNew).tz('UTC').format('YYYY-MM-DD HH:mm:ss.SSS+00:00'))
+            .exec()
+
+        } catch (error) {
+            this.logger.error(`error: ${JSON.stringify(error.message)}`)
+            throw new RpcException(error.message)
+        }
+
     }
 }

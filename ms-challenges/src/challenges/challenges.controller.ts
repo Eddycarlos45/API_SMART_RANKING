@@ -61,8 +61,8 @@ export class ChallengesController {
         const originalMsg = context.getMessage()
 
         try {
-            this.logger.log(`idMatch: ${data}`)
-            const idMatch: string = data.idPartida
+            this.logger.log(`idMatch: ${JSON.stringify(data)}`)
+            const idMatch: string = data.idMatch
             const challenge: IChallenge = data.challenge
             await this.challengeService.updateChallengeMatch(idMatch, challenge)
             await channel.ack(originalMsg)
@@ -111,6 +111,27 @@ export class ChallengesController {
                 return await this.challengeService.findChallengeById(_id)
             } else {
                 return await this.challengeService.findAllChallenges()
+            }
+        } finally {
+            await channel.ack(originalMsg)
+        }
+    }
+    
+    @MessagePattern('query-challenges-performed')
+    async queryChallengesPerformed(
+        @Payload() payload: any,
+        @Ctx() context: RmqContext
+    ): Promise<IChallenge[] | IChallenge> {
+        const channel = context.getChannelRef()
+        const originalMsg = context.getMessage()
+
+        try {
+            const {idCategory, dataRef} = payload
+            this.logger.log(`data: ${JSON.stringify(payload)}`)
+            if(dataRef) {
+                return await this.challengeService.queryChallengesPerformedByDate(idCategory,dataRef)
+            } else {
+                return await this.challengeService.queryChallengesPerformed(idCategory)
             }
         } finally {
             await channel.ack(originalMsg)
