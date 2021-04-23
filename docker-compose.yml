@@ -5,3 +5,9 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+  awsSES:
+    image: jdelibas/aws-ses-local
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./email:/aws-ses-local/output 
