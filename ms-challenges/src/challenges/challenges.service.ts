@@ -5,15 +5,18 @@ import { Model } from 'mongoose';
 import { ChallengeStatus } from './challenge-status.enum';
 import { IChallenge } from './interfaces/challenge.interface';
 import * as momentTimezone from 'moment-timezone';
+import { ClientProxySmartRanking } from 'src/proxyrmq/client-proxy';
 @Injectable()
 export class ChallengesService {
 
     constructor(
         @InjectModel('Challenge')
-        private readonly challengeModel: Model<IChallenge>
+        private readonly challengeModel: Model<IChallenge>,
+        private readonly clientProxySmartRanking: ClientProxySmartRanking
       ) {}
 
       private readonly logger = new Logger(ChallengesService.name);
+      private clientNotifications = this.clientProxySmartRanking.getClientProxyNotificationsInstance()
       
     async createChallenge(
        challenge: IChallenge,
@@ -28,7 +31,11 @@ export class ChallengesService {
         
             createdChallenge.status = ChallengeStatus.PENDING;
             this.logger.log(`createChalleng: ${JSON.stringify(createdChallenge)}`);
-            return await createdChallenge.save();
+            await createdChallenge.save();
+
+            return await this.clientNotifications.emit('notification-new-challenge', challenge)
+            .toPromise()
+            
         } catch (error) {
             throw new RpcException(error.message)
         }

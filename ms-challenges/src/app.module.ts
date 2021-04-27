@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChallengesModule } from './challenges/challenges.module';
-import { ProxyrmqModule } from './proxyrmq/proxyrmq.module';
+import { ProxyRMQModule } from './proxyrmq/proxyrmq.module';
 import * as dotenv from 'dotenv';
 import { MatchsModule } from './matchs/matchs.module';
 
@@ -16,7 +16,7 @@ dotenv.config();
     useFindAndModify: false,
   }),
   ChallengesModule,
-  ProxyrmqModule,
+  ProxyRMQModule,
   MatchsModule
 ],
   controllers: [],
