@@ -10,4 +10,4 @@ services:
     ports:
       - "9001:9001"
     volumes:
-      - ./email:/aws-ses-local/output 
+      - ./email:/aws-ses-local/output
