@@ -1,10 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   Post,
   Put,
@@ -13,61 +11,37 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ClientProxySmartRanking } from 'src/common/proxymrq/client-proxy';
 import { CreatePlayerDTO } from './dtos/create-player.dto';
 import { UpdatePlayerDTO } from './dtos/update-player.dto';
+import { PlayersService } from './players.service';
 
 @Controller('api/v1/players')
 export class PlayersController {
-  private logger = new Logger(PlayersController.name);
 
-  constructor(private clientProxySmartRanking: ClientProxySmartRanking) {}
-
-  private clientAdminBackend = this.clientProxySmartRanking.getClientProxyAdminBackendInstance();
+  constructor(private playersService: PlayersService) {}
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createCaregory(@Body() createPlayerDTO: CreatePlayerDTO) {
-    this.logger.log(`createPlayerDTO: ${JSON.stringify(createPlayerDTO)}`);
-    const category = await this.clientAdminBackend
-      .send('get-categories', createPlayerDTO.category)
-      .toPromise();
-
-    if (category) {
-      this.clientAdminBackend.emit('create-player', createPlayerDTO);
-    } else {
-      throw new BadRequestException(`Categoria não cadastrada!`);
-    }
+  async createPlayer(@Body() createPlayerDTO: CreatePlayerDTO) {
+    this.playersService.createPlayer(createPlayerDTO)
   }
 
   @Get()
-  getCategories(@Query('idPlayer') _id: string): Observable<any> {
-    return this.clientAdminBackend.send('get-players', _id ? _id : '');
+  getPlayers(@Query('idPlayer') _id: string): Promise<any> {
+     return this.playersService.getPlayers(_id);
   }
 
   @Put('/:_id')
   @UsePipes(ValidationPipe)
-  async updateCategory(
+  async updatePlayer(
     @Body() updatePlayerDTO: UpdatePlayerDTO,
     @Param('_id') _id: string,
   ) {
-    this.logger.log(`updatePlayerDTO: ${JSON.stringify(updatePlayerDTO)}`);
-    const category = await this.clientAdminBackend
-      .send('get-categories', updatePlayerDTO.category)
-      .toPromise();
-
-      if (category) {
-        this.clientAdminBackend.emit('update-player', {
-          id: _id,
-          player: updatePlayerDTO,
-        });
-      } else {
-        throw new BadRequestException(`Categoria não cadastrada!`);
-      }
+    await this.playersService.updatePlayer(updatePlayerDTO, _id)
   }
 
   @Delete('/:_id')
   deletePlayer(@Param('_id') _id: string){
-    this.clientAdminBackend.emit('delete-player', {_id})
+    this.playersService.deletePlayer(_id)
   }
 }

@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Logger,
   Param,
   Post,
   Put,
@@ -10,33 +9,24 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ClientProxy,
-  ClientProxyFactory,
-  Transport,
-} from '@nestjs/microservices';
-import { Observable } from 'rxjs';
-import { ClientProxySmartRanking } from 'src/common/proxymrq/client-proxy';
+import { CategoriesService } from './categories.service';
 import { CreateCategoryDTO } from './dtos/create-category.dto';
 import { UpdateCategoryDTO } from './dtos/update-category.dto';
 
 @Controller('api/v1/categories')
 export class CategoriesController {
-  private logger = new Logger(CategoriesController.name);
 
-  constructor(private clientProxySmartRanking: ClientProxySmartRanking) {}
-
-  private clientAdminBackend = this.clientProxySmartRanking.getClientProxyAdminBackendInstance();
+  constructor(private categoriesService: CategoriesService) {}
 
   @Post()
   @UsePipes(ValidationPipe)
-  createCaregory(@Body() createCategoryDTO: CreateCategoryDTO) {
-    this.clientAdminBackend.emit('create-category', createCategoryDTO);
+  createCategory(@Body() createCategoryDTO: CreateCategoryDTO) {
+    this.categoriesService.createCategory(createCategoryDTO);
   }
 
   @Get()
-  getCategories(@Query('idCategory') _id: string): Observable<any> {
-    return this.clientAdminBackend.send('get-categories', _id ? _id : '');
+  async getCategories(@Query('idCategory') _id: string) {
+    return  await this.categoriesService.getCategories(_id);
   }
 
   @Put('/:_id')
@@ -45,9 +35,9 @@ export class CategoriesController {
     @Body() updateCategoryDTO: UpdateCategoryDTO,
     @Param('_id') _id: string,
   ) {
-    this.clientAdminBackend.emit('update-category', {
-      id: _id,
-      category: updateCategoryDTO,
-    });
+    this.categoriesService.updateCategory(
+    updateCategoryDTO,
+    _id
+    );
   }
 }

@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 export class CreatePlayerDTO {
+
   @IsNotEmpty()
   readonly phoneNumber: string;
 

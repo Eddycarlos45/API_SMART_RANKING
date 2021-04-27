@@ -1,24 +1,17 @@
-import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import {ClientProxySmartRanking} from '../common/proxymrq/client-proxy'
+import { Controller, Get, Query } from '@nestjs/common';
+import { RankingsService } from './rankings.service';
 
 @Controller('api/v1/rankings')
 export class RankingsController {
     constructor(
-        private clientProxySmartRanking: ClientProxySmartRanking
+        private rankingsService: RankingsService
     ){}
 
-    private clientRankingsBackend = this.clientProxySmartRanking.getClientProxyRankingsInstance()
     @Get()
-    queryRankings(
+    async queryRankings(
         @Query('idCategory') idCategory: string,
-        @Query('dataRef') dataRef: string): Observable<any>
+        @Query('dataRef') dataRef: string): Promise<any>
     {
-        if(!idCategory){
-            throw new BadRequestException('O id da categoria é obrigatório!')
-        }  
-
-        return this.clientRankingsBackend.send('query-rankings',
-        {idCategory: idCategory, dataRef: dataRef ? dataRef : ''})
+       return await this.queryRankings(idCategory, dataRef)
     }
 }
